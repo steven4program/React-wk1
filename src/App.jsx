@@ -61,6 +61,19 @@ function App() {
     },
   ])
 
+  const updateCount = (id, operation) => {
+    setDrinkData((data) => {
+      return data.map((item) => {
+        if (item.id === id) {
+          let newCount = operation === "add" ? item.count + 1 : item.count - 1;
+          return { ...item, count: newCount < 0 ? 0 : newCount };
+        } else {
+          return item;
+        }
+      });
+    });
+  }
+
   const drinkItems = drinkData.map((item) => {
     return (
       <tr key={item.id}>
@@ -70,15 +83,13 @@ function App() {
         </td>
         <td>{item.price}</td>
         <td>
-          <button>-</button>
+          <button onClick={() => updateCount(item.id, "minus")}>-</button>
           {item.count}
-          <button>+</button>
+          <button onClick={() => updateCount(item.id, "add")}>+</button>
         </td>
       </tr>
-    )
-  }
-)
-
+    )}
+  )
 
   return (
     <>
