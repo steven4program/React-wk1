@@ -61,6 +61,29 @@ function App() {
     },
   ])
 
+  const [editingId, setEditingId] = useState(null);
+
+  const handleEdit = (id) => {
+    setEditingId(id);
+  }
+
+  const handleSave = (id, name, description, price) => {
+    setDrinkData((data) => {
+      return data.map((item) => {
+        if (item.id === id) {
+          return { ...item, name, description, price: Number(price) };
+        } else {
+          return item;
+        }
+      });
+    });
+    setEditingId(null);
+  }
+
+  const handleClose = () => {
+    setEditingId(null);
+  }
+
   const updateCount = (id, operation) => {
     setDrinkData((data) => {
       return data.map((item) => {
@@ -74,22 +97,51 @@ function App() {
     });
   }
 
-  const drinkItems = drinkData.map((item) => {
-    return (
+
+  const drinkItems = drinkData.flatMap((item) => {
+    const rows = [
       <tr key={item.id}>
         <td>{item.name}</td>
-        <td>
-          <small>{item.description}</small>
-        </td>
+        <td><small>{item.description}</small></td>
         <td>{item.price}</td>
         <td>
           <button onClick={() => updateCount(item.id, "minus")}>-</button>
           {item.count}
           <button onClick={() => updateCount(item.id, "add")}>+</button>
         </td>
+        <td>
+          <button className='editNameButton' onClick={() => handleEdit(item.id)}>Edit</button>
+        </td>
       </tr>
-    )}
-  )
+    ];
+
+    if (editingId === item.id) {
+      rows.push(
+        <tr key={`edit-${item.id}`}>
+          <td colSpan={6}>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const name = e.target.drinkName.value;
+              const description = e.target.drinkDescription.value;
+              const price = e.target.drinkPrice.value;
+              handleSave(item.id, name, description, price);
+            }}>
+              <label htmlFor="drinkName">品項</label>
+              <input id="drinkName" type="text" defaultValue={item.name} />
+              <label htmlFor="drinkDescription">描述</label>
+              <input id="drinkDescription" type="text" defaultValue={item.description} />
+              <label htmlFor="drinkPrice">價格</label>
+              <input id="drinkPrice" type="number" defaultValue={item.price} />
+              <button type="submit">Save</button>
+              <button type="button" onClick={handleClose}>Close</button>
+            </form>
+          </td>
+        </tr>
+      );
+    }
+
+    return rows;
+  });
 
   return (
     <>
@@ -100,6 +152,7 @@ function App() {
             <th scope="col">描述</th>
             <th scope="col">價格</th>
             <th scope="col">庫存</th>
+            <th scope="col">編輯</th>
           </tr>
         </thead>
         <tbody>
