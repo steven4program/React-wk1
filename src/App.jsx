@@ -64,7 +64,11 @@ function App() {
   const [editingId, setEditingId] = useState(null);
 
   const handleEdit = (id) => {
-    setEditingId(id);
+    if (editingId === id) {
+      setEditingId(null);
+    } else {
+      setEditingId(id);
+    }
   }
 
   const handleSave = (id, name, description, price) => {
@@ -100,25 +104,25 @@ function App() {
 
   const drinkItems = drinkData.flatMap((item) => {
     const rows = [
-      <tr key={item.id}>
-        <td>{item.name}</td>
-        <td><small>{item.description}</small></td>
-        <td>{item.price}</td>
-        <td>
-          <button onClick={() => updateCount(item.id, "minus")}>-</button>
+      <tr key={item.id} className="text-center">
+        <td className="align-middle">{item.name}</td>
+        <td className="align-middle"><small>{item.description}</small></td>
+        <td className="align-middle">{item.price}</td>
+        <td className="align-middle">
+          <button className="btn btn-outlined-secondary btn-lg mr-2" onClick={() => updateCount(item.id, "minus")}>-</button>
           {item.count}
-          <button onClick={() => updateCount(item.id, "add")}>+</button>
+          <button className="btn btn-outlined-secondary btn-lg ml-2" onClick={() => updateCount(item.id, "add")}>+</button>
         </td>
-        <td>
-          <button className='editNameButton' onClick={() => handleEdit(item.id)}>Edit</button>
+        <td className="align-middle">
+          <button className="btn btn-warning" onClick={() => handleEdit(item.id)}>Edit</button>
         </td>
       </tr>
     ];
 
     if (editingId === item.id) {
       rows.push(
-        <tr key={`edit-${item.id}`}>
-          <td colSpan={6}>
+        <tr key={`edit-${item.id}`} className="text-center">
+          <td colSpan={5}>
             <form onSubmit={(e) => {
               e.preventDefault();
               const name = e.target.drinkName.value;
@@ -126,14 +130,22 @@ function App() {
               const price = e.target.drinkPrice.value;
               handleSave(item.id, name, description, price);
             }}>
-              <label htmlFor="drinkName">品項</label>
-              <input id="drinkName" type="text" defaultValue={item.name} />
-              <label htmlFor="drinkDescription">描述</label>
-              <input id="drinkDescription" type="text" defaultValue={item.description} />
-              <label htmlFor="drinkPrice">價格</label>
-              <input id="drinkPrice" type="number" defaultValue={item.price} />
-              <button type="submit">Save</button>
-              <button type="button" onClick={handleClose}>Close</button>
+              <div className="form-group">
+                <label htmlFor="drinkName">品項</label>
+                <input className="form-control" id="drinkName" type="text" defaultValue={item.name} />
+              </div>
+              <div className="form-group">
+                <label htmlFor="drinkDescription">描述</label>
+                <input className="form-control" id="drinkDescription" type="text" defaultValue={item.description} />
+             </div>
+             <div className="form-group mb-2">
+                <label htmlFor="drinkPrice">價格</label>
+                <input className="form-control" id="drinkPrice" type="number" defaultValue={item.price} />
+              </div>
+              <div className="d-flex justify-content-end">
+                <button type="submit" style={{ marginRight: '16px' }} className="btn btn-success mr-3">Save</button>
+                <button className="btn btn-danger d-block" onClick={handleClose}>Close</button>
+              </div>
             </form>
           </td>
         </tr>
@@ -144,10 +156,10 @@ function App() {
   });
 
   return (
-    <>
-      <table>
-        <thead>
-          <tr>
+    <div className="container mt-3">
+      <table className='table table-borded'>
+        <thead className='thead-dark'>
+          <tr className="text-center">
             <th scope="col">品項</th>
             <th scope="col">描述</th>
             <th scope="col">價格</th>
@@ -159,7 +171,7 @@ function App() {
           {drinkItems}
         </tbody>
       </table>
-    </> 
+    </div>
   )
 }
 
